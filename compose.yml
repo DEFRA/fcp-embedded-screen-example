@@ -7,7 +7,7 @@
 #    Siti Agri embedded screen content.
 #
 # 2. siti-agri-stub (port 3002) — mock Siti Agri infrastructure (facade API,
-#    SSO bridge, Agrigate UI), as deployed on the existing CAPD platform.
+#    SSO bridge, Siti Agri UI), as deployed on the existing CAPD platform.
 #
 # 3. nginx — TWO virtual gateways in a single container:
 #    - CDP Gateway  (port 80  → localhost:3000): routes /* to portal
@@ -87,7 +87,7 @@ services:
     image: nginx:alpine
     ports:
       - "3000:80"   # CDP gateway — SFD portal (user entry point)
-      - "3019:81"   # CAPD gateway — Siti Agri SSO bridge + Agrigate UI
+      - "3019:81"   # CAPD gateway — Siti Agri SSO bridge + Siti Agri UI
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:

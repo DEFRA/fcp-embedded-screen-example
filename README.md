@@ -2,15 +2,15 @@
 
 This is a reference implementation demonstrating how the **Single Front Door (SFD)** service can embed **Siti Agri** screens within its pages using iframes and an SSO bridge pattern.
 
-The example recreates the embedded screen mechanism used by the current Rural Payments Portal — where a GOV.UK-styled portal renders third-party agricultural software screens (from Siti Agri / Agrigate) inside iframes — using the SFD technology stack: **Hapi.js**, **Nunjucks**, **Node.js**, and the **GOV.UK Design System**.
+The example recreates the embedded screen mechanism used by the current Rural Payments Portal — where a GOV.UK-styled portal renders third-party agricultural software screens (from Siti Agri) inside iframes — using the SFD technology stack: **Hapi.js**, **Nunjucks**, **Node.js**, and the **GOV.UK Design System**.
 
 Critically, the demo models the **real deployment topology**: SFD runs on a **different gateway (CDP)** from Siti Agri **(CAPD)**. This makes the iframe relationship genuinely **cross-origin**, so all cross-origin browser security mechanisms — CSP `frame-src`, `frame-ancestors`, and `postMessage` origin validation — are exercised for real.
 
 ## What Are Embedded Screens?
 
-In the Rural Payments Service, an **embedded screen** is a Siti Agri (Agrigate) application screen that is rendered inside the portal within an `<iframe>`. The user sees the screen as part of the portal journey, but the content is served by Siti Agri infrastructure (a third-party Italian agricultural software system).
+In the Rural Payments Service, an **embedded screen** is a Siti Agri application screen that is rendered inside the portal within an `<iframe>`. The user sees the screen as part of the portal journey, but the content is served by Siti Agri infrastructure (a third-party Italian agricultural software system).
 
-The mechanism works through an **SSO (Single Sign-On) bridge**. Rather than requiring the user to separately authenticate against Siti Agri, the portal constructs a parameterised URL pointing to an SSO bridge endpoint. The bridge authenticates the portal user into Siti Agri server-side and redirects the browser to the appropriate Agrigate screen, which then loads inside the iframe.
+The mechanism works through an **SSO (Single Sign-On) bridge**. Rather than requiring the user to separately authenticate against Siti Agri, the portal constructs a parameterised URL pointing to an SSO bridge endpoint. The bridge authenticates the portal user into Siti Agri server-side and redirects the browser to the appropriate Siti Agri screen, which then loads inside the iframe.
 
 There are **12 distinct embedded screen types** in the real system, including:
 
@@ -38,7 +38,7 @@ The demo models this with a single nginx container running two virtual gateway s
 | Gateway | Port | Represents | Routes to |
 |---|---|---|---|
 | **CDP gateway** | 3000 | SFD on CDP | portal only |
-| **CAPD gateway** | 3019 | Siti Agri on CAPD | siti-agri-stub (SSO bridge + Agrigate UI) |
+| **CAPD gateway** | 3019 | Siti Agri on CAPD | siti-agri-stub (SSO bridge + Siti Agri UI) |
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────┐
@@ -61,7 +61,7 @@ The demo models this with a single nginx container running two virtual gateway s
 │                             │             │                                      │
 │  GOV.UK-styled frontend     │  ─────────► │  Facade API  (screen params)         │
 │  Hapi.js + Nunjucks         │  (Docker    │  SSO Bridge  (auth + redirect)       │
-│  Renders pages with iframes │   DNS)      │  Agrigate UI (embedded screens)      │
+│  Renders pages with iframes │   DNS)      │  Siti Agri UI (embedded screens)      │
 └─────────────────────────────┘             └──────────────────────────────────────┘
 ```
 
@@ -104,7 +104,7 @@ sequenceDiagram
     Browser->>CAPD: GET /sso-bridge/actions/sso-bridge/ssoBridge?...
     CAPD->>Stub: proxy → GET /sso-bridge/...
 
-    Note over Stub: Real SSO bridge would:<br/>1. Validate caller session<br/>2. SSO handshake with Siti Agri<br/>3. Redirect to Agrigate screen<br/><br/>Stub skips SSO, renders directly.
+    Note over Stub: Real SSO bridge would:<br/>1. Validate caller session<br/>2. SSO handshake with Siti Agri<br/>3. Redirect to Siti Agri screen<br/><br/>Stub skips SSO, renders directly.
 
     Stub-->>CAPD: HTML (embedded screen content)<br/>+ CSP: frame-ancestors 'self' http://localhost:3000
     CAPD-->>Browser: HTML response (loaded in iframe)
@@ -231,7 +231,7 @@ Represents **three separate pieces** of Siti Agri infrastructure combined into o
 
 2. **SSO Bridge** (`GET /sso-bridge/actions/sso-bridge/ssoBridge`) — in production, performs server-side authentication with SitiAgri and redirects to the embedded screen; sets `frame-ancestors` CSP header with the SFD portal origin
 
-3. **Agrigate UI** (the HTML rendered in the iframe) — in production, an Angular.js application served by SitiAgri infrastructure
+3. **Siti Agri UI** (the HTML rendered in the iframe) — in production, an Angular.js application served by SitiAgri infrastructure
 
 Key files:
 - `src/routes/embedded-screens-api.js` — facade API returning SitiAgri identifiers
@@ -338,7 +338,7 @@ fcp-embedded-screen-example/
 | CAPD gateway (nginx port 81) | CAPD gateway (Siti Agri infrastructure) |
 | `siti-agri-stub/src/routes/embedded-screens-api.js` | `capd-externaldb-facade` (Java/Dropwizard) |
 | `siti-agri-stub/src/routes/sso-bridge.js` | SitiAgri SSO Bridge (separate CAPD infrastructure) |
-| `siti-agri-stub/src/views/screens/*.njk` | Agrigate UI (Angular.js on SitiAgri servers) |
+| `siti-agri-stub/src/views/screens/*.njk` | Siti Agri UI (Angular.js on SitiAgri servers) |
 | `siti-agri-stub/src/data/organisations.js` | SitiAgri Oracle Database |
 | `FRAME_SRC=http://localhost:3019` | `FRAME_SRC=https://api.ruralpayments.service.gov.uk` |
 | `SFD_PORTAL_ORIGIN=http://localhost:3000` | `SFD_PORTAL_ORIGIN=https://your-sfd-service.gov.uk` |
@@ -363,9 +363,9 @@ The following attribution statement MUST be cited in your products and applicati
 > Contains public sector information licensed under the Open Government licence v3
 
 
-In the Rural Payments Service, an **embedded screen** is a Siti Agri (Agrigate) application screen that is rendered inside the portal within an `<iframe>`. The user sees the screen as part of the portal journey, but the content is served by Siti Agri infrastructure (a third-party Italian agricultural software system).
+In the Rural Payments Service, an **embedded screen** is a Siti Agri application screen that is rendered inside the portal within an `<iframe>`. The user sees the screen as part of the portal journey, but the content is served by Siti Agri infrastructure (a third-party Italian agricultural software system).
 
-The mechanism works through an **SSO (Single Sign-On) bridge**. Rather than requiring the user to separately authenticate against Siti Agri, the portal constructs a parameterised URL pointing to an SSO bridge endpoint. The bridge authenticates the portal user into Siti Agri server-side and redirects the browser to the appropriate Agrigate screen, which then loads inside the iframe.
+The mechanism works through an **SSO (Single Sign-On) bridge**. Rather than requiring the user to separately authenticate against Siti Agri, the portal constructs a parameterised URL pointing to an SSO bridge endpoint. The bridge authenticates the portal user into Siti Agri server-side and redirects the browser to the appropriate Siti Agri screen, which then loads inside the iframe.
 
 There are **12 distinct embedded screen types** in the real system, including:
 
@@ -390,7 +390,7 @@ The demo consists of three components orchestrated by Docker Compose:
 |---|---|---|
 | **nginx** (gateway) | 3000 | Reverse proxy — user entry point. Makes SSO bridge same-origin with portal. |
 | **portal** | 3001 | SFD frontend — GOV.UK-styled pages with iframes for embedded screens |
-| **siti-agri-stub** | 3002 | Mock Siti Agri infrastructure — facade API, SSO bridge, and Agrigate UI |
+| **siti-agri-stub** | 3002 | Mock Siti Agri infrastructure — facade API, SSO bridge, and Siti Agri UI |
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -413,7 +413,7 @@ The demo consists of three components orchestrated by Docker Compose:
 │                              │  │                                  │
 │  GOV.UK-styled frontend      │  │  Facade API (screen params)      │
 │  Hapi.js + Nunjucks          │  │  SSO Bridge (auth + redirect)    │
-│  Renders pages with iframes  │  │  Agrigate UI (embedded screens)  │
+│  Renders pages with iframes  │  │  Siti Agri UI (embedded screens)  │
 │                              │  │                                  │
 │  Calls facade API ───────────┼──┤  (backend-to-backend)            │
 │  (Docker internal DNS)       │  │                                  │
@@ -457,7 +457,7 @@ sequenceDiagram
     Browser->>nginx: GET /sso-bridge/actions/sso-bridge/ssoBridge?...
     nginx->>Stub: proxy → GET /sso-bridge/...
 
-    Note over Stub: Real SSO bridge would:<br/>1. Validate caller session<br/>2. SSO handshake with Siti Agri<br/>3. Redirect to Agrigate screen<br/><br/>Stub skips SSO, renders directly.
+    Note over Stub: Real SSO bridge would:<br/>1. Validate caller session<br/>2. SSO handshake with Siti Agri<br/>3. Redirect to Siti Agri screen<br/><br/>Stub skips SSO, renders directly.
 
     Stub-->>nginx: HTML (embedded screen content)<br/>+ frame-ancestors CSP header
     nginx-->>Browser: HTML response (loaded in iframe)
@@ -586,7 +586,7 @@ Represents **three separate pieces** of SitiAgri infrastructure combined into on
 
 2. **SSO Bridge** (`GET /sso-bridge/actions/sso-bridge/ssoBridge`) — in production, a dedicated component that performs server-side authentication with SitiAgri and redirects to the embedded screen
 
-3. **Agrigate UI** (the HTML rendered in the iframe) — in production, an Angular.js application served by SitiAgri infrastructure
+3. **Siti Agri UI** (the HTML rendered in the iframe) — in production, an Angular.js application served by SitiAgri infrastructure
 
 Key files:
 - `src/routes/embedded-screens-api.js` — facade API returning SitiAgri identifiers
@@ -688,7 +688,7 @@ fcp-embedded-screen-example/
 | `portal/` | SFD Frontend on CDP |
 | `siti-agri-stub/src/routes/embedded-screens-api.js` | `capd-externaldb-facade` (Java/Dropwizard) |
 | `siti-agri-stub/src/routes/sso-bridge.js` | SitiAgri SSO Bridge (separate infrastructure) |
-| `siti-agri-stub/src/views/screens/*.njk` | Agrigate UI (Angular.js on SitiAgri servers) |
+| `siti-agri-stub/src/views/screens/*.njk` | Siti Agri UI (Angular.js on SitiAgri servers) |
 | `siti-agri-stub/src/data/organisations.js` | SitiAgri Oracle Database |
 | `nginx/nginx.conf` | CDP API Gateway / Platform reverse proxy |
 | Hardcoded `callerId` / `organisationId` | Defra Identity session (after auth) |

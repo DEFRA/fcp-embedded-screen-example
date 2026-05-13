@@ -3,7 +3,7 @@
 # This stub represents three pieces of SitiAgri infrastructure:
 # 1. capd-externaldb-facade API (GET /embedded-screens/params/{frn})
 # 2. SSO Bridge (/sso-bridge/actions/sso-bridge/ssoBridge)
-# 3. Agrigate UI (the embedded screen HTML)
+# 3. Siti Agri UI (the embedded screen HTML)
 #
 # In production, these are separate Java-based services running on
 # different servers. Here they're combined into one Node.js service
