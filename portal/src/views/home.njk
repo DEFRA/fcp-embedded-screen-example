@@ -1,0 +1,43 @@
+{#
+  Home page — GOV.UK "Start now" pattern.
+
+  This is the first page a user sees. It explains the service and
+  provides a prominent green "Start now" button to begin the journey.
+
+  In the real Rural Payments portal, the user would sign in via
+  Defra Identity first. This demo skips authentication to focus
+  on the embedded screen pattern.
+#}
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
+
+      <p class="govuk-body-l">
+        Use this service to view and manage your farming business information,
+        including BPS entitlements, applications, and land use.
+      </p>
+
+      <p class="govuk-body">
+        This is a demonstration of how the Single Front Door (SFD) service
+        embeds Siti Agri screens within its pages using iframes and an SSO bridge.
+      </p>
+
+      <div class="govuk-inset-text">
+        In the real service, you would sign in with your Rural Payments
+        account via Defra Identity before accessing business information.
+        This demo skips authentication to focus on the embedded screen pattern.
+      </div>
+
+      {{ govukButton({
+        text: "Start now",
+        href: "/business",
+        isStartButton: true
+      }) }}
+    </div>
+  </div>
+{% endblock %}

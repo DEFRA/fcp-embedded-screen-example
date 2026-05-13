@@ -1,0 +1,116 @@
+{#
+  Land Use embedded screen — simulates the SitiAgri 'landuse_edit' application.
+
+  In the real system, this shows a map-based interface where farmers can
+  view and edit their land parcels, boundaries, and declared land use.
+  The Agrigate UI includes interactive mapping powered by GIS data from
+  the SitiAgri parcel database.
+
+  This stub shows a simplified tabular view of land parcel data that
+  represents what the real screen would display (minus the actual map).
+#}
+{% extends "layout.njk" %}
+
+{% block title %}Land Use — Siti Agri{% endblock %}
+
+{% block content %}
+  <h1>Land Use — View / Edit</h1>
+
+  <div class="sa-info">
+    Viewing land parcels for organisation ID: {{ soggettoId }}
+    (Caller: {{ callerid }}, Org: {{ organisationid }})
+  </div>
+
+  <h2>Land Parcels — 2025</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Parcel Ref</th>
+        <th>Sheet Ref</th>
+        <th>Area (ha)</th>
+        <th>Land Use</th>
+        <th>Land Cover</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>SP1234 5678</td>
+        <td>SP12</td>
+        <td>25.40</td>
+        <td>Permanent Grassland</td>
+        <td>Agricultural Land</td>
+        <td><span class="sa-badge sa-badge--active">Confirmed</span></td>
+      </tr>
+      <tr>
+        <td>SP1234 5679</td>
+        <td>SP12</td>
+        <td>18.90</td>
+        <td>Arable Land</td>
+        <td>Agricultural Land</td>
+        <td><span class="sa-badge sa-badge--active">Confirmed</span></td>
+      </tr>
+      <tr>
+        <td>SP1234 5680</td>
+        <td>SP12</td>
+        <td>45.67</td>
+        <td>Temporary Grass</td>
+        <td>Agricultural Land</td>
+        <td><span class="sa-badge sa-badge--active">Confirmed</span></td>
+      </tr>
+      <tr>
+        <td>SP1235 6001</td>
+        <td>SP12</td>
+        <td>32.10</td>
+        <td>Permanent Grassland</td>
+        <td>Agricultural Land</td>
+        <td><span class="sa-badge sa-badge--pending">Pending RLE2</span></td>
+      </tr>
+      <tr>
+        <td>SP1235 6002</td>
+        <td>SP12</td>
+        <td>12.30</td>
+        <td>Woodland</td>
+        <td>Non-agricultural</td>
+        <td><span class="sa-badge sa-badge--active">Confirmed</span></td>
+      </tr>
+      <tr>
+        <td>SK9876 5432</td>
+        <td>SK98</td>
+        <td>82.50</td>
+        <td>Moorland</td>
+        <td>SDA Moorland</td>
+        <td><span class="sa-badge sa-badge--active">Confirmed</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Land Summary</h2>
+  <table>
+    <tbody>
+      <tr>
+        <th>Total Parcels</th>
+        <td>6</td>
+      </tr>
+      <tr>
+        <th>Total Area</th>
+        <td>216.87 ha</td>
+      </tr>
+      <tr>
+        <th>Eligible Area</th>
+        <td>204.57 ha</td>
+      </tr>
+      <tr>
+        <th>Pending Changes</th>
+        <td>1 parcel (RLE2 form submitted)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sa-info">
+    <strong>Note:</strong> In the real Agrigate UI, this screen includes an interactive
+    map showing parcel boundaries. Land use changes are submitted via RLE2
+    (Rural Land and Entitlements) forms.
+  </div>
+{% endblock %}

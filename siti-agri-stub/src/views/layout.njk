@@ -1,0 +1,142 @@
+{#
+  Base layout for Siti Agri embedded screen views.
+
+  INTENTIONALLY DIFFERENT FROM GOV.UK DESIGN SYSTEM.
+  This template uses a distinct visual style to demonstrate that the
+  iframe content comes from a third-party system (Siti Agri / Agrigate).
+  In the real system, Agrigate screens use their own Angular-based UI
+  framework with different branding, typography, and layout.
+
+  The visual distinction helps developers understand the boundary between
+  portal content (GOV.UK styled) and embedded content (SitiAgri styled).
+
+  POSTMESSAGE SCRIPT:
+  Each embedded screen includes a small script that sends the content
+  height to the parent page via window.postMessage(). This allows the
+  portal to resize the iframe dynamically, eliminating scrollbars and
+  creating a seamless visual integration.
+#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Siti Agri{% endblock %}</title>
+  <style>
+    /* Intentionally simple styling — NOT GOV.UK Design System.
+       This represents the third-party Siti Agri / Agrigate UI styling. */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #333;
+      padding: 16px;
+      background-color: #fafafa;
+    }
+    .sa-header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 8px 16px;
+      margin: -16px -16px 16px -16px;
+      font-size: 12px;
+    }
+    .sa-header small {
+      opacity: 0.8;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: #1b5e20;
+    }
+    h2 {
+      font-size: 16px;
+      margin: 16px 0 8px 0;
+      color: #2e7d32;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #e8f5e9;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    td {
+      font-size: 13px;
+    }
+    .sa-info {
+      background-color: #e3f2fd;
+      border-left: 4px solid #1976d2;
+      padding: 12px;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .sa-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .sa-badge--active { background: #c8e6c9; color: #1b5e20; }
+    .sa-badge--pending { background: #fff3e0; color: #e65100; }
+    .sa-badge--submitted { background: #e3f2fd; color: #0d47a1; }
+  </style>
+</head>
+<body>
+  <div class="sa-header">
+    <small>SitiAgri Agrigate — Embedded Screen ({{ application }})</small>
+  </div>
+
+  {% block content %}{% endblock %}
+
+  {#
+    PostMessage script — communicates content height to the parent page.
+
+    This is how the iframe tells the portal how tall its content is,
+    allowing the portal to resize the iframe and eliminate scrollbars.
+
+    SECURITY: We specify the target origin (window.location.origin) in
+    the postMessage call. This ensures the message is only delivered to
+    pages on the expected origin. In a cross-origin setup, you would
+    specify the portal's exact origin instead of '*'.
+
+    MESSAGE FORMAT:
+    {
+      type: 'embedded-screen-resize',
+      height: <number in pixels>
+    }
+  #}
+  <script>
+    // Send content height to parent page for iframe resizing.
+    // Uses '*' as target origin because in the nginx setup, parent and
+    // iframe are same-origin. In cross-origin deployments, replace '*'
+    // with the specific portal origin for security.
+    function reportHeight() {
+      var height = document.documentElement.scrollHeight;
+      window.parent.postMessage(
+        { type: 'embedded-screen-resize', height: height },
+        '*'
+      );
+    }
+
+    // Report height on load and after any content changes
+    window.addEventListener('load', reportHeight);
+    // Also report after a short delay to catch dynamic content
+    setTimeout(reportHeight, 500);
+  </script>
+</body>
+</html>

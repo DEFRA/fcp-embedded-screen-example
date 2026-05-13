@@ -1,0 +1,52 @@
+{#
+  Base layout template — extends the GOV.UK Frontend template.
+
+  This provides the standard GOV.UK page structure:
+  - Crown logo and service name in header
+  - Phase banner (beta/alpha)
+  - Main content area
+  - Footer with standard links
+
+  All page templates extend this layout and override blocks
+  to inject page-specific content.
+#}
+{% extends "govuk/template.njk" %}
+
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
+{% from "govuk/components/footer/macro.njk" import govukFooter %}
+
+{% set htmlClasses = "govuk-template" %}
+
+{% block headIcons %}
+  <link rel="shortcut icon" href="{{ assetPath }}/images/favicon.ico" type="image/x-icon">
+{% endblock %}
+
+{% block head %}
+  <link href="{{ getAssetPath('application.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    serviceName: serviceName,
+    serviceUrl: serviceUrl
+  }) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukPhaseBanner({
+    tag: {
+      text: "Prototype"
+    },
+    html: 'This is a demonstration of the embedded screen pattern — not a real service.'
+  }) }}
+{% endblock %}
+
+{% block footer %}
+  {{ govukFooter({}) }}
+{% endblock %}
+
+{% block bodyEnd %}
+  <script type="module" src="{{ getAssetPath('application.js') }}"></script>
+{% endblock %}

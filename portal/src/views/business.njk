@@ -1,0 +1,73 @@
+{#
+  Business overview page.
+
+  After selecting a business (organisation), the user sees this summary
+  page with links to various features. Some of these features are
+  "embedded screens" — Siti Agri pages rendered inside iframes.
+
+  In the real portal, the business details come from the authenticated
+  session after the user selects their organisation during sign-in.
+  Here they are hardcoded for the demo.
+#}
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% block beforeContent %}
+  {{ super() }}
+  {{ govukBackLink({
+    text: "Back",
+    href: "/"
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ business.businessName }}</h1>
+
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: { text: "Firm Reference Number (FRN)" },
+            value: { text: business.frn }
+          },
+          {
+            key: { text: "Single Business Identifier (SBI)" },
+            value: { text: business.sbi }
+          }
+        ]
+      }) }}
+
+      <h2 class="govuk-heading-l">Schemes and services</h2>
+
+      <p class="govuk-body">
+        The links below open Siti Agri screens embedded within this portal.
+        Each screen is loaded in an iframe via an SSO bridge that authenticates
+        the user with the Siti Agri system.
+      </p>
+
+      <div class="govuk-inset-text">
+        <strong>How this works:</strong> When you click a link below, the portal:
+        <ol class="govuk-list govuk-list--number">
+          <li>Calls the Siti Agri facade API to get screen identifiers for your FRN</li>
+          <li>Constructs an SSO bridge URL with the required parameters</li>
+          <li>Renders a page with an iframe pointing to the SSO bridge URL</li>
+          <li>The SSO bridge authenticates you and loads the Siti Agri screen</li>
+        </ol>
+      </div>
+
+      <ul class="govuk-list">
+        {% for screen in embeddedScreens %}
+          <li class="govuk-!-margin-bottom-6">
+            <h3 class="govuk-heading-m govuk-!-margin-bottom-1">
+              <a href="{{ screen.href }}" class="govuk-link">{{ screen.title }}</a>
+            </h3>
+            <p class="govuk-body">{{ screen.description }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

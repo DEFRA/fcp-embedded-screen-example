@@ -1,0 +1,30 @@
+{
+  "name": "fcp-embedded-screen-siti-agri-stub",
+  "version": "0.0.0",
+  "description": "Stub service representing Siti Agri infrastructure — provides the facade API, SSO bridge, and embedded screen UI for local development",
+  "main": "src/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=22.16.0"
+  },
+  "scripts": {
+    "dev": "nodemon --inspect=0.0.0.0 --ext js,json,njk --legacy-watch ./src",
+    "start": "NODE_ENV=production node --use-strict .",
+    "test": "TZ=UTC vitest run",
+    "test:watch": "TZ=UTC vitest"
+  },
+  "author": "Defra DDTS",
+  "license": "OGL-UK-3.0",
+  "dependencies": {
+    "@hapi/hapi": "21.4.0",
+    "@hapi/inert": "7.1.0",
+    "@hapi/vision": "7.0.3",
+    "convict": "6.2.5",
+    "joi": "18.0.1",
+    "nunjucks": "3.2.4"
+  },
+  "devDependencies": {
+    "nodemon": "3.1.10",
+    "vitest": "4.1.3"
+  }
+}

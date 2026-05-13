@@ -1,0 +1,56 @@
+// Main application stylesheet.
+//
+// Imports GOV.UK Frontend styles and adds custom styles for the
+// embedded screen iframe container.
+
+// GOV.UK Frontend — the full component library styles.
+// The $govuk-assets-path variable tells the framework where to find
+// fonts and images at runtime (served by Hapi's static file handler).
+@use "govuk-frontend" with (
+  $govuk-assets-path: '/public/assets/'
+);
+
+// ==========================================================================
+// Embedded screen iframe styles
+// ==========================================================================
+//
+// These styles create a full-width iframe container that visually integrates
+// the third-party Siti Agri content within the GOV.UK-styled portal page.
+//
+// The real portal uses similar styles in _sitiagri.scss with a
+// .iframe-tarpaulin overlay that prevents mouse events from being
+// captured by the iframe during drag/resize operations on the parent.
+
+.embedded-screen-container {
+  position: relative;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.embedded-screen-frame {
+  // Full width of the content area
+  width: 100%;
+  // Minimum height prevents the page looking empty while content loads.
+  // The JavaScript postMessage handler will resize this dynamically
+  // once the iframe content reports its actual height.
+  min-height: 600px;
+  // Remove default iframe border
+  border: 1px solid #b1b4b6;
+  // Smooth height transitions when resizing via postMessage
+  transition: height 0.3s ease;
+}
+
+// Loading indicator — positioned over the iframe area.
+// Hidden by JavaScript once the iframe fires its load event.
+.embedded-screen-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  background: #f3f2f1;
+  border: 1px solid #b1b4b6;
+}

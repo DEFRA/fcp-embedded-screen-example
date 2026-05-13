@@ -1,0 +1,13 @@
+# Development overrides — expose individual service ports for debugging.
+#
+# These are only needed when you want to access services directly
+# (bypassing nginx). Normal usage should go through http://localhost:3000.
+
+services:
+  portal:
+    ports:
+      - "3001:3001"
+
+  siti-agri-stub:
+    ports:
+      - "3002:3002"

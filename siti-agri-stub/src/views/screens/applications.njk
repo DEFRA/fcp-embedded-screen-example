@@ -1,0 +1,109 @@
+{#
+  BPS Applications embedded screen — simulates the SitiAgri 'apps_list' application.
+
+  In the real system, this would show the organisation's Basic Payment Scheme
+  applications across multiple scheme years. Users can view submitted claims,
+  check their status, and apply for new BPS claims from this screen.
+
+  The real Agrigate UI provides interactive forms for submitting BPS claims.
+  This stub shows a static view of mock application data.
+#}
+{% extends "layout.njk" %}
+
+{% block title %}BPS Applications — Siti Agri{% endblock %}
+
+{% block content %}
+  <h1>BPS Applications</h1>
+
+  <div class="sa-info">
+    Viewing applications for organisation ID: {{ soggettoId }}
+    (Caller: {{ callerid }}, Org: {{ organisationid }})
+  </div>
+
+  <h2>Scheme Year 2025</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Application Ref</th>
+        <th>Scheme</th>
+        <th>Submitted</th>
+        <th>Claimed Area (ha)</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>BPS-2025-ENG-001234</td>
+        <td>Basic Payment Scheme</td>
+        <td>15 May 2025</td>
+        <td>216.27</td>
+        <td><span class="sa-badge sa-badge--submitted">Submitted</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Scheme Year 2024</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Application Ref</th>
+        <th>Scheme</th>
+        <th>Submitted</th>
+        <th>Claimed Area (ha)</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>BPS-2024-ENG-001234</td>
+        <td>Basic Payment Scheme</td>
+        <td>12 May 2024</td>
+        <td>210.50</td>
+        <td><span class="sa-badge sa-badge--active">Paid</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Scheme Year 2023</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Application Ref</th>
+        <th>Scheme</th>
+        <th>Submitted</th>
+        <th>Claimed Area (ha)</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>BPS-2023-ENG-001234</td>
+        <td>Basic Payment Scheme</td>
+        <td>10 May 2023</td>
+        <td>205.30</td>
+        <td><span class="sa-badge sa-badge--active">Paid</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Application Summary</h2>
+  <table>
+    <tbody>
+      <tr>
+        <th>Total Applications</th>
+        <td>3</td>
+      </tr>
+      <tr>
+        <th>Current Year Status</th>
+        <td>Submitted — awaiting processing</td>
+      </tr>
+      <tr>
+        <th>Last Payment</th>
+        <td>£49,234.56 (December 2024)</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}

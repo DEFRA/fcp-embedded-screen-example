@@ -1,0 +1,85 @@
+{#
+  Embedded screen page — renders a Siti Agri screen inside an iframe.
+
+  THIS IS THE KEY TEMPLATE demonstrating the embedded screen pattern.
+
+  How the iframe works:
+  1. The `src` attribute points to the SSO bridge URL (absolute URL,
+     constructed server-side, pointing to the CAPD gateway origin)
+  2. The browser requests the iframe content CROSS-ORIGIN from the CAPD
+     gateway (localhost:3019) — a different origin from this page (localhost:3000)
+  3. The CAPD gateway proxies the request to siti-agri-stub:3002
+  4. The SSO bridge authenticates and renders the Siti Agri screen
+  5. The screen appears within this page's iframe
+
+  CROSS-ORIGIN SECURITY (all three must be configured):
+  - Portal CSP frame-src must include the CAPD gateway origin:
+    Content-Security-Policy: frame-src 'self' http://localhost:3019
+    (configured via FRAME_SRC env var)
+  - Siti Agri responses must include frame-ancestors for the CDP gateway:
+    Content-Security-Policy: frame-ancestors 'self' http://localhost:3000
+    (configured via SFD_PORTAL_ORIGIN env var in siti-agri-stub)
+  - postMessage origin validated against the CAPD gateway origin (ssoBridgeOrigin),
+    NOT window.location.origin (which is the CDP gateway — the wrong origin)
+  - In production (HTTPS), cookies set by the iframe need SameSite=None; Secure
+
+  PROGRESSIVE ENHANCEMENT:
+  - Without JavaScript, the iframe still loads and displays content.
+  - With JavaScript, the iframe auto-resizes to fit its content height
+    (via postMessage from the embedded screen).
+#}
+{% extends "layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% block beforeContent %}
+  {{ super() }}
+  {{ govukBackLink({
+    text: "Back to business overview",
+    href: backLink
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l">{{ screenTitle }}</h1>
+
+      {#
+        The iframe container provides a styled wrapper with a minimum height.
+        The .embedded-screen-frame class is defined in our SCSS and provides:
+        - Full width of the content area
+        - Minimum height so the page doesn't look empty while loading
+        - A subtle border to visually separate portal content from iframe content
+      #}
+      <div class="embedded-screen-container" data-module="embedded-screen">
+        {#
+          IFRAME ATTRIBUTES:
+          - src: The SSO bridge URL (same-origin via nginx gateway)
+          - title: Accessibility — screen readers announce this
+          - class: Styled to fill the container
+          - data-origin: Used by JavaScript to validate postMessage origins
+
+          SANDBOX (commented out for this demo):
+          In production you might add sandbox="allow-scripts allow-same-origin
+          allow-forms allow-popups" to restrict the iframe content. However,
+          this can break some Siti Agri screens that rely on parent frame access.
+        #}
+        <iframe
+          src="{{ ssoBridgeUrl }}"
+          title="{{ screenTitle }} - Siti Agri embedded screen"
+          class="embedded-screen-frame"
+          data-origin="{{ ssoBridgeOrigin }}"
+        ></iframe>
+
+        {#
+          Loading overlay — shown while the iframe content loads.
+          Hidden by JavaScript once the iframe fires its load event.
+        #}
+        <div class="embedded-screen-loading" aria-hidden="true">
+          <p class="govuk-body">Loading...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

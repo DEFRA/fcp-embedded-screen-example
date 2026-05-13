@@ -1,0 +1,13 @@
+# Test overrides — run unit tests inside the portal container.
+#
+# Usage:
+#   docker compose -f compose.yml -f compose.test.yml run --rm portal
+
+services:
+  portal:
+    build:
+      target: development
+    command: npm test
+    volumes:
+      - ./portal/test:/home/node/test
+      - ./portal/coverage:/home/node/coverage

@@ -1,0 +1,97 @@
+# Docker Compose orchestration for the embedded screen example.
+#
+# Three services model the TWO-GATEWAY architecture of the real system:
+#
+# 1. portal (port 3001) — the SFD frontend, deployed on CDP. Renders
+#    GOV.UK-styled pages with iframes pointing to the CAPD gateway for
+#    Siti Agri embedded screen content.
+#
+# 2. siti-agri-stub (port 3002) — mock Siti Agri infrastructure (facade API,
+#    SSO bridge, Agrigate UI), as deployed on the existing CAPD platform.
+#
+# 3. nginx — TWO virtual gateways in a single container:
+#    - CDP Gateway  (port 80  → localhost:3000): routes /* to portal
+#    - CAPD Gateway (port 81  → localhost:3019): routes /sso-bridge/* and
+#      /api/* to siti-agri-stub
+#
+# CROSS-ORIGIN:
+# The portal (http://localhost:3000) embeds iframes from the CAPD gateway
+# (http://localhost:3019) — a different origin. The browser enforces
+# cross-origin security rules:
+#
+#   - Portal CSP must allow:   frame-src 'self' http://localhost:3019
+#   - Siti Agri CSP must allow: frame-ancestors 'self' http://localhost:3000
+#   - postMessage origin is validated against http://localhost:3019
+#
+# These are configured via environment variables below, making the cross-origin
+# constraints visible and explicit.
+#
+# Usage:
+#   docker compose up
+#   SFD portal:     http://localhost:3000  (CDP gateway — user entry point)
+#   CAPD gateway:   http://localhost:3019  (Siti Agri gateway — for debugging)
+
+services:
+  portal:
+    build:
+      context: ./portal
+      target: development
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      # Backend-to-backend: portal calls facade API via Docker DNS.
+      # This is NOT the same network path as the browser-facing CAPD gateway.
+      SITI_AGRI_API_HOST: http://siti-agri-stub:3002
+      # The CAPD gateway URL — the origin the BROWSER uses to reach Siti Agri.
+      # Portal uses this to construct absolute iframe src URLs (cross-origin).
+      SITI_AGRI_GATEWAY_URL: http://localhost:3019
+      # CSP frame-src: must include the CAPD gateway origin so the browser
+      # allows iframes to load content from http://localhost:3019.
+      FRAME_SRC: http://localhost:3019
+    volumes:
+      - ./portal/src:/home/node/src
+      - ./portal/package.json:/home/node/package.json
+    depends_on:
+      siti-agri-stub:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  siti-agri-stub:
+    build:
+      context: ./siti-agri-stub
+      target: development
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      # The CDP gateway origin (SFD portal) — used in the frame-ancestors
+      # CSP header so the browser allows Siti Agri content to be framed by
+      # the SFD portal. Must match the origin the user's browser sees for
+      # the portal (i.e. the CDP gateway, not the portal's internal port).
+      SFD_PORTAL_ORIGIN: http://localhost:3000
+    volumes:
+      - ./siti-agri-stub/src:/home/node/src
+      - ./siti-agri-stub/package.json:/home/node/package.json
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "3000:80"   # CDP gateway — SFD portal (user entry point)
+      - "3019:81"   # CAPD gateway — Siti Agri SSO bridge + Agrigate UI
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      portal:
+        condition: service_healthy
+      siti-agri-stub:
+        condition: service_healthy

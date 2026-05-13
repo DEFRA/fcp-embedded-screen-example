@@ -1,0 +1,92 @@
+{#
+  Entitlements embedded screen — simulates the SitiAgri 'ent_view' application.
+
+  In the real system, this would be an Angular.js-based screen showing the
+  organisation's BPS (Basic Payment Scheme) entitlements. The data would come
+  from the SitiAgri Oracle database via the Agrigate API.
+
+  This stub shows realistic-looking mock data to demonstrate how the iframe
+  content appears within the portal page.
+#}
+{% extends "layout.njk" %}
+
+{% block title %}View Entitlements — Siti Agri{% endblock %}
+
+{% block content %}
+  <h1>BPS Entitlements</h1>
+
+  <div class="sa-info">
+    Viewing entitlements for organisation ID: {{ soggettoId }}
+    (Caller: {{ callerid }}, Org: {{ organisationid }})
+  </div>
+
+  <h2>Current Entitlements — Scheme Year 2025</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Entitlement ID</th>
+        <th>Region</th>
+        <th>Unit Value (£)</th>
+        <th>Area (ha)</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ENT-2025-001234</td>
+        <td>England (Non-SDA)</td>
+        <td>232.89</td>
+        <td>45.67</td>
+        <td><span class="sa-badge sa-badge--active">Active</span></td>
+      </tr>
+      <tr>
+        <td>ENT-2025-001235</td>
+        <td>England (Non-SDA)</td>
+        <td>232.89</td>
+        <td>32.10</td>
+        <td><span class="sa-badge sa-badge--active">Active</span></td>
+      </tr>
+      <tr>
+        <td>ENT-2025-001236</td>
+        <td>England (SDA)</td>
+        <td>198.45</td>
+        <td>18.50</td>
+        <td><span class="sa-badge sa-badge--active">Active</span></td>
+      </tr>
+      <tr>
+        <td>ENT-2025-001237</td>
+        <td>England (SDA Moorland)</td>
+        <td>56.78</td>
+        <td>120.00</td>
+        <td><span class="sa-badge sa-badge--pending">Pending Transfer</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Entitlement Summary</h2>
+  <table>
+    <tbody>
+      <tr>
+        <th>Total Entitlements</th>
+        <td>4</td>
+      </tr>
+      <tr>
+        <th>Total Area</th>
+        <td>216.27 ha</td>
+      </tr>
+      <tr>
+        <th>Total Value</th>
+        <td>£47,891.23</td>
+      </tr>
+      <tr>
+        <th>Active</th>
+        <td>3</td>
+      </tr>
+      <tr>
+        <th>Pending</th>
+        <td>1</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}
