@@ -4,7 +4,7 @@
 // into one service for local development simplicity:
 // - The capd-externaldb-facade API
 // - The SSO Bridge
-// - The Agrigate embedded screen UI
+// - The Siti Agri embedded screen UI
 
 import convict from 'convict'
 

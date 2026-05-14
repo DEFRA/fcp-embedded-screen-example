@@ -33,7 +33,7 @@
   // Minimum height prevents the page looking empty while content loads.
   // The JavaScript postMessage handler will resize this dynamically
   // once the iframe content reports its actual height.
-  min-height: 600px;
+  min-height: 800px;
   // Remove default iframe border
   border: 1px solid #b1b4b6;
   // Smooth height transitions when resizing via postMessage

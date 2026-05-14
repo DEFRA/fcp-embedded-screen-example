@@ -14,6 +14,17 @@ vi.mock('../../src/common/helpers/embedded-screens.js', () => ({
   getEmbeddedScreenParams: vi.fn()
 }))
 
+// Mock the auth helper — returns demo values matching the hardcoded defaults
+vi.mock('../../src/common/helpers/auth.js', () => ({
+  getAuthenticatedUser: vi.fn(() => ({
+    callerId: '12345',
+    organisationId: '67890',
+    frn: '1234567890',
+    businessName: 'Example Farm Ltd',
+    sbi: '123456789'
+  }))
+}))
+
 // Mock config so tests are not environment-dependent
 vi.mock('../../src/config/config.js', () => ({
   config: {

@@ -37,6 +37,7 @@
 // - Sensitive identifiers (callerId, soggettoId) are passed as query
 //   parameters. In production, consider POST or a token exchange.
 
+import { getAuthenticatedUser } from '../common/helpers/auth.js'
 import { getEmbeddedScreenParams } from '../common/helpers/embedded-screens.js'
 import { config } from '../config/config.js'
 
@@ -69,6 +70,10 @@ export const embeddedScreen = {
       return h.response('Unknown screen type').code(404)
     }
 
+    // Get the authenticated user's identity and organisation context.
+    // See portal/src/common/helpers/auth.js for the callerId assumption.
+    const { callerId, organisationId, frn } = getAuthenticatedUser(request)
+
     // STEP 1: Call the facade API to get SitiAgri identifiers.
     //
     // In the real system, this calls capd-externaldb-facade which queries
@@ -78,7 +83,6 @@ export const embeddedScreen = {
     // - dossierId: the organisation's dossier (file/case) ID
     // - applicationModelId: used for BPS application screens
     // - profileModelId: used for profile-related screens
-    const frn = '1234567890' // Hardcoded for demo — would come from session
 
     let screenParams
     try {
@@ -95,18 +99,13 @@ export const embeddedScreen = {
     //
     // The SSO bridge URL is a parameterised endpoint that:
     // 1. Authenticates the portal user into SitiAgri (server-side SSO)
-    // 2. Redirects the browser to the appropriate Agrigate screen
+    // 2. Redirects the browser to the appropriate Siti Agri screen
     //
     // Parameters:
     // - application: the SitiAgri screen type to load (e.g. 'ent_view')
-    // - callerid: the user's ID in the CAPD system (from auth session)
+    // - callerid: the user's ID in the CAPD system (from authenticated user context)
     // - organisationid: the selected organisation's ID
     // - subj_entity_id: the SitiAgri soggettoId for the organisation
-    //
-    // In this demo, callerId and organisationId are hardcoded.
-    // In production, they come from the Defra Identity session.
-    const callerId = '12345'
-    const organisationId = '67890'
 
     // Build the SSO bridge URL as an ABSOLUTE URL pointing to the CAPD gateway.
     // This is the origin the browser will use to fetch iframe content —
@@ -116,11 +115,11 @@ export const embeddedScreen = {
     //   SITI_AGRI_GATEWAY_URL = https://api.ruralpayments.service.gov.uk (or similar)
     //   ssoBridgeUrl = https://api.ruralpayments.service.gov.uk/sso-bridge/...
     const sitiAgriGatewayUrl = config.get('sitiAgriGatewayUrl')
-    const ssoBridgeUrl = `${sitiAgriGatewayUrl}/sso-bridge/actions/sso-bridge/ssoBridge`
-      + `?application=${screenConfig.application}`
-      + `&callerid=${callerId}`
-      + `&organisationid=${organisationId}`
-      + `&subj_entity_id=${screenParams.soggettoId}`
+    const ssoBridgeUrl = `${sitiAgriGatewayUrl}/sso-bridge/actions/sso-bridge/ssoBridge` +
+      `?application=${screenConfig.application}` +
+      `&callerid=${callerId}` +
+      `&organisationid=${organisationId}` +
+      `&subj_entity_id=${screenParams.soggettoId}`
 
     // The origin component of the CAPD gateway URL.
     // Passed to the template so client-side JavaScript knows which origin

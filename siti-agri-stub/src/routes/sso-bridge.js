@@ -1,7 +1,7 @@
 // SSO Bridge route — GET /sso-bridge/actions/sso-bridge/ssoBridge
 //
 // This route simulates the SitiAgri SSO Bridge — the authentication
-// gateway that sits between the portal and the Agrigate embedded screens.
+// gateway that sits between the portal and the Siti Agri embedded screens.
 //
 // WHAT THE REAL SSO BRIDGE DOES:
 // 1. Receives query parameters identifying the user, organisation, and
@@ -9,8 +9,8 @@
 // 2. Performs a server-side SSO handshake with SitiAgri:
 //    - Validates the caller's session/token
 //    - Creates or retrieves a SitiAgri session for the user
-//    - Sets authentication cookies for the Agrigate UI
-// 3. Redirects the browser to the appropriate Agrigate screen URL
+//    - Sets authentication cookies for the Siti Agri UI
+// 3. Redirects the browser to the appropriate Siti Agri screen URL
 //
 // In this stub, we skip the actual SSO handshake (there's no real SitiAgri
 // to authenticate against) and directly render the embedded screen content.
@@ -74,11 +74,11 @@ export const ssoBridge = {
     // handshake would occur:
     // 1. Validate callerid against the session store
     // 2. Create/retrieve a SitiAgri session for the user
-    // 3. Set session cookies for the Agrigate UI
-    // 4. Redirect (302) to the Agrigate screen URL
+    // 3. Set session cookies for the Siti Agri UI
+    // 4. Redirect (302) to the Siti Agri screen URL
     //
     // In this stub, we skip the redirect and render the screen directly,
-    // simulating what the Agrigate UI would show after the SSO handshake.
+    // simulating what the Siti Agri UI would show after the SSO handshake.
 
     console.log(
       `SSO Bridge: application=${application}, ` +

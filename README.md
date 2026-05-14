@@ -6,6 +6,8 @@ The example recreates the embedded screen mechanism used by the current Rural Pa
 
 Critically, the demo models the **real deployment topology**: SFD runs on a **different gateway (CDP)** from Siti Agri **(CAPD)**. This makes the iframe relationship genuinely **cross-origin**, so all cross-origin browser security mechanisms — CSP `frame-src`, `frame-ancestors`, and `postMessage` origin validation — are exercised for real.
 
+> **⚠️ callerId Assumption**: This demo assumes SFD has access to the user's `callerId`. In practice, `callerId` is a CAPD-internal identifier that is **not currently accessible** to services on CDP. The KITS gateway in Crown Hosting resolves `callerId` transparently for backend API calls (SFD → DAL → KITS gateway → CAPD API), but no equivalent mechanism exists for SFD to obtain the raw `callerId` value required for SSO bridge URLs. The SSO bridge URL is loaded by the user's browser as an iframe `src` — no server-side intermediary can inject `callerId` into this browser-initiated request. Before SFD can use embedded screens in production, a resolution mechanism must be implemented. See `portal/src/common/helpers/auth.js` for details.
+
 ## What Are Embedded Screens?
 
 In the Rural Payments Service, an **embedded screen** is a Siti Agri application screen that is rendered inside the portal within an `<iframe>`. The user sees the screen as part of the portal journey, but the content is served by Siti Agri infrastructure (a third-party Italian agricultural software system).
@@ -343,10 +345,11 @@ fcp-embedded-screen-example/
 | `FRAME_SRC=http://localhost:3019` | `FRAME_SRC=https://api.ruralpayments.service.gov.uk` |
 | `SFD_PORTAL_ORIGIN=http://localhost:3000` | `SFD_PORTAL_ORIGIN=https://your-sfd-service.gov.uk` |
 | `SITI_AGRI_GATEWAY_URL=http://localhost:3019` | `SITI_AGRI_GATEWAY_URL=https://api.ruralpayments.service.gov.uk` |
-| Hardcoded `callerId` / `organisationId` | Defra Identity session (after auth) |
+| Simulated auth context (`portal/src/common/helpers/auth.js`) | Defra Identity session + callerId resolution |
 
 ## What This Demo Does NOT Cover
 
+- **callerId resolution**: The demo assumes `callerId` is available to SFD — it is not. A resolution mechanism (e.g. SSO bridge accepting Defra Identity tokens, or a callerId lookup service) must be implemented first.
 - **Authentication**: No Defra Identity integration (see [fcp-defra-id-example](https://github.com/DEFRA/fcp-defra-id-example))
 - **Real SSO handshake**: The stub renders screens directly without an actual SSO flow
 - **Interactive forms**: The embedded screens are read-only mock data
@@ -691,10 +694,11 @@ fcp-embedded-screen-example/
 | `siti-agri-stub/src/views/screens/*.njk` | Siti Agri UI (Angular.js on SitiAgri servers) |
 | `siti-agri-stub/src/data/organisations.js` | SitiAgri Oracle Database |
 | `nginx/nginx.conf` | CDP API Gateway / Platform reverse proxy |
-| Hardcoded `callerId` / `organisationId` | Defra Identity session (after auth) |
+| Simulated auth context (`portal/src/common/helpers/auth.js`) | Defra Identity session + callerId resolution |
 
 ## What This Demo Does NOT Cover
 
+- **callerId resolution**: The demo assumes `callerId` is available to SFD — it is not. A resolution mechanism (e.g. SSO bridge accepting Defra Identity tokens, or a callerId lookup service) must be implemented first.
 - **Authentication**: No Defra Identity integration (see [fcp-defra-id-example](https://github.com/DEFRA/fcp-defra-id-example))
 - **Real SSO handshake**: The stub renders screens directly without an actual SSO flow
 - **Cross-origin deployment**: This demo uses same-origin via nginx; a real cross-origin setup requires coordinated CSP, frame-ancestors, and cookie changes

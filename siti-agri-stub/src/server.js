@@ -10,7 +10,7 @@
 //    into SitiAgri and redirects to the embedded screen. In production,
 //    this is a separate component behind the reverse proxy.
 //
-// 3. Agrigate UI — the actual embedded screen HTML. In production, this
+// 3. Siti Agri UI — the actual embedded screen HTML. In production, this
 //    is SitiAgri's own Angular-based UI rendered after the SSO handshake.
 //
 // CORS is enabled because in a development setup without nginx, the portal
@@ -19,7 +19,7 @@
 // for flexibility.
 //
 // FRAME-ANCESTORS HEADER:
-// The SSO bridge and Agrigate screen responses must include a CSP
+// The SSO bridge and Siti Agri screen responses must include a CSP
 // frame-ancestors header to tell browsers they're allowed to be framed.
 // Without this, browsers may block the iframe. In the nginx setup (same-origin),
 // the default 'self' would suffice, but in cross-origin deployments the

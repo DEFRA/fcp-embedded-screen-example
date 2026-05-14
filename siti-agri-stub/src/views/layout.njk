@@ -3,8 +3,8 @@
 
   INTENTIONALLY DIFFERENT FROM GOV.UK DESIGN SYSTEM.
   This template uses a distinct visual style to demonstrate that the
-  iframe content comes from a third-party system (Siti Agri / Agrigate).
-  In the real system, Agrigate screens use their own Angular-based UI
+  iframe content comes from a third-party system (Siti Agri).
+  In the real system, Siti Agri screens use their own Angular-based UI
   framework with different branding, typography, and layout.
 
   The visual distinction helps developers understand the boundary between
@@ -24,7 +24,7 @@
   <title>{% block title %}Siti Agri{% endblock %}</title>
   <style>
     /* Intentionally simple styling — NOT GOV.UK Design System.
-       This represents the third-party Siti Agri / Agrigate UI styling. */
+       This represents the third-party Siti Agri UI styling. */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -98,7 +98,7 @@
 </head>
 <body>
   <div class="sa-header">
-    <small>SitiAgri Agrigate — Embedded Screen ({{ application }})</small>
+    <small>Siti Agri — Embedded Screen ({{ application }})</small>
   </div>
 
   {% block content %}{% endblock %}

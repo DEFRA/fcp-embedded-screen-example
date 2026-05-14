@@ -4,27 +4,28 @@
 // (organisation) and then sees a summary page with links to various
 // features — some of which are embedded screens from Siti Agri.
 //
-// This route simulates that experience using a hardcoded FRN (Firm
-// Reference Number) and business name for the demo. In production,
-// these would come from the authenticated user's session after they
-// select an organisation via Defra Identity.
+// This route uses the authenticated user context to display business
+// details and links to embedded screens. See
+// portal/src/common/helpers/auth.js for the callerId assumption.
 //
 // The page displays links to three embedded screen types:
 // - View Entitlements (ent_view)
 // - BPS Applications (apps_list)
 // - View/Edit Land Use (landuse_edit)
 
+import { getAuthenticatedUser } from '../common/helpers/auth.js'
+
 export const business = {
   method: 'GET',
   path: '/business',
-  handler: (_request, h) => {
-    // In production, these values come from the authenticated session.
-    // The FRN is looked up after the user selects their organisation
-    // during the Defra Identity sign-in flow.
+  handler: (request, h) => {
+    // Get the authenticated user's identity and organisation context.
+    const { businessName, frn, sbi } = getAuthenticatedUser(request)
+
     const businessContext = {
-      businessName: 'Example Farm Ltd',
-      frn: '1234567890',
-      sbi: '123456789'
+      businessName,
+      frn,
+      sbi
     }
 
     return h.view('business', {
