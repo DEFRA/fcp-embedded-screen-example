@@ -17,10 +17,10 @@
   "license": "OGL-UK-3.0",
   "dependencies": {
     "@hapi/hapi": "21.4.0",
-    "@hapi/inert": "7.1.0",
+    "@hapi/inert": "7.1.1",
     "@hapi/vision": "7.0.3",
     "convict": "6.2.5",
-    "joi": "18.0.1",
+    "joi": "18.2.1",
     "nunjucks": "3.2.4"
   },
   "devDependencies": {

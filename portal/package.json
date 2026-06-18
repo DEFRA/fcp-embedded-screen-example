@@ -25,14 +25,14 @@
   "dependencies": {
     "@hapi/crumb": "9.0.1",
     "@hapi/hapi": "21.4.0",
-    "@hapi/inert": "7.1.0",
+    "@hapi/inert": "7.1.1",
     "@hapi/scooter": "8.0.0",
     "@hapi/vision": "7.0.3",
     "@hapi/wreck": "18.1.2",
     "blankie": "5.0.0",
     "convict": "6.2.5",
     "govuk-frontend": "6.1.0",
-    "joi": "18.0.1",
+    "joi": "18.2.1",
     "nunjucks": "3.2.4"
   },
   "devDependencies": {
